@@ -17,9 +17,25 @@ export async function sendChatMessage(
     body: JSON.stringify({ message, history }),
   });
 
+  // A 503 still carries a usable ChatResponse explaining why (out
+  // of quota, not configured). Treating every non-2xx as a network
+  // failure would replace that explanation with a generic
+  // "can't reach the server", which is what hid the real cause.
+  let data: ChatApiResponse | null = null;
+
+  try {
+    data = (await res.json()) as ChatApiResponse;
+  } catch {
+    data = null;
+  }
+
+  if (data?.response) {
+    return data;
+  }
+
   if (!res.ok) {
     throw new Error(`Chat request failed with status ${res.status}`);
   }
 
-  return res.json();
+  throw new Error("Chat request returned an unreadable response");
 }
