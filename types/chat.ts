@@ -20,6 +20,11 @@ export interface QuickAction {
   prompt: string;
 }
 
+export interface ChatTurn {
+  role: MessageRole;
+  content: string;
+}
+
 export interface ChatApiResponse {
   success: boolean;
   agent: string;

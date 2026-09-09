@@ -1,17 +1,20 @@
-import { ChatApiResponse } from "@/types/chat";
+import { ChatApiResponse, ChatTurn } from "@/types/chat";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://campusg-backend.onrender.com";
 
+// The backend is stateless, so recent turns are replayed with each
+// message - otherwise every reply starts over with a fresh greeting.
 export async function sendChatMessage(
-  message: string
+  message: string,
+  history: ChatTurn[] = []
 ): Promise<ChatApiResponse> {
   const res = await fetch(`${API_BASE_URL}/api/chat`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ message, history }),
   });
 
   if (!res.ok) {
