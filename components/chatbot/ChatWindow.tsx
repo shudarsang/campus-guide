@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import { QuickAction } from "@/types/chat";
 import ChatHeader from "./ChatHeader";
@@ -8,6 +8,7 @@ import ChatInput from "./ChatInput";
 import MessageBubble from "./MessageBubble";
 import QuickActions from "./QuickActions";
 import TypingIndicator from "./TypingIndicator";
+import ZiaAvatar from "./ZiaAvatar";
 
 interface ChatWindowProps {
   onMinimize: () => void;
@@ -17,6 +18,17 @@ interface ChatWindowProps {
 export default function ChatWindow({ onMinimize, onClose }: ChatWindowProps) {
   const { messages, isTyping, sendMessage } = useChat();
   const bottomRef = useRef<HTMLDivElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Escape shrinks an expanded window back to its compact size.
+  useEffect(() => {
+    if (!isExpanded) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsExpanded(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isExpanded]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -27,20 +39,29 @@ export default function ChatWindow({ onMinimize, onClose }: ChatWindowProps) {
   };
 
   return (
-    <div className="fixed bottom-24 right-6 z-50 flex h-[600px] w-[380px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl bg-white shadow-widget">
-      <ChatHeader onMinimize={onMinimize} onClose={onClose} />
+    <div
+      className={`fixed bottom-24 right-6 z-50 flex max-h-[calc(100vh-7.5rem)] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl bg-white shadow-widget transition-[width,height] duration-300 ease-out ${
+        isExpanded ? "h-[calc(100vh-7.5rem)] w-[760px]" : "h-[600px] w-[380px]"
+      }`}
+    >
+      <ChatHeader
+        isExpanded={isExpanded}
+        onToggleExpand={() => setIsExpanded((prev) => !prev)}
+        onMinimize={onMinimize}
+        onClose={onClose}
+      />
 
       <div className="chat-scroll flex-1 space-y-4 overflow-y-auto p-4">
         <div className="flex items-start gap-2">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-base">
-            🤖
+          <div className="h-8 w-8 shrink-0">
+            <ZiaAvatar animated={false} sparkles={false} />
           </div>
           <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-brand-50 px-4 py-3">
             <p className="text-sm font-semibold text-brand-700">
               Welcome to Ethiraj College Site! 👋
             </p>
             <p className="mt-1 text-sm leading-relaxed text-gray-700">
-              I&apos;m CampusGuide AI, your smart assistant. How can I help
+              I&apos;m Zia, your CampusGuide AI assistant. How can I help
               you today?
             </p>
           </div>

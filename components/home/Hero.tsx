@@ -1,5 +1,7 @@
 "use client";
 
+import ZiaAvatar from "@/components/chatbot/ZiaAvatar";
+
 import { useEffect, useState } from "react";
 
 const SLIDES = [
@@ -66,9 +68,10 @@ export default function Hero() {
           </a>
           <button
             onClick={openChat}
-            className="rounded-full border border-white/70 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+            className="inline-flex items-center gap-2 rounded-full border border-white/70 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
           >
-            🤖 Chat with CampusGuide AI
+            <ZiaAvatar className="h-5 w-5" animated={false} sparkles={false} />
+          Chat with Zia
           </button>
         </div>
       </div>

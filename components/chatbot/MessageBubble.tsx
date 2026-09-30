@@ -1,10 +1,11 @@
 import { ChatMessage } from "@/types/chat";
 import MarkdownRenderer from "./MarkdownRenderer";
+import ZiaAvatar from "./ZiaAvatar";
 
 function BotAvatar() {
   return (
-    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-base shadow-xs">
-      🤖
+    <div className="h-8 w-8 shrink-0">
+      <ZiaAvatar animated={false} sparkles={false} />
     </div>
   );
 }

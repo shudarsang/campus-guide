@@ -1,5 +1,7 @@
 "use client";
 
+import ZiaAvatar from "@/components/chatbot/ZiaAvatar";
+
 import ChatWidget from "@/components/chatbot/ChatWidget";
 import Header from "@/components/home/Header";
 import Hero from "@/components/home/Hero";
@@ -287,7 +289,7 @@ export default function Home() {
             </h2>
             <p className="mt-3 max-w-xl text-sm text-brand-50/90">
               Admissions are open across undergraduate, postgraduate, and
-              research programmes. Ask CampusGuide AI about eligibility,
+              research programmes. Ask Zia, our AI assistant, about eligibility,
               fees, and the application process, or apply directly online.
             </p>
             <div className="mt-6 flex flex-wrap gap-4">
@@ -303,9 +305,10 @@ export default function Home() {
                 onClick={() =>
                   window.dispatchEvent(new Event("campusguide:open-chat"))
                 }
-                className="rounded-full border border-white/70 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                className="inline-flex items-center gap-2 rounded-full border border-white/70 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
               >
-                🤖 Ask About Admissions
+                <ZiaAvatar className="h-5 w-5" animated={false} sparkles={false} />
+          Ask About Admissions
               </button>
             </div>
           </div>

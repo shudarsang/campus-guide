@@ -1,5 +1,7 @@
 "use client";
 
+import ZiaAvatar from "@/components/chatbot/ZiaAvatar";
+
 const NAV_LINKS = [
   { label: "About Us", href: "#about" },
   { label: "Academics", href: "#academics" },
@@ -51,9 +53,10 @@ export default function Header() {
           onClick={() =>
             window.dispatchEvent(new Event("campusguide:open-chat"))
           }
-          className="hidden rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-brand-700 sm:block"
+          className="hidden items-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-brand-700 sm:inline-flex"
         >
-          🤖 Ask CampusGuide AI
+          <ZiaAvatar className="h-5 w-5" animated={false} sparkles={false} />
+          Ask Zia
         </button>
       </div>
     </header>
