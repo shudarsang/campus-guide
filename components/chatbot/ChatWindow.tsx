@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "@/hooks/useChat";
-import { useVoice } from "@/hooks/useVoice";
+import { useLiveVoice, VOICE_LANGUAGES } from "@/hooks/useLiveVoice";
 import { QuickAction } from "@/types/chat";
 import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
+import LiveVoicePanel from "./LiveVoicePanel";
 import MessageBubble from "./MessageBubble";
 import QuickActions from "./QuickActions";
 import TypingIndicator from "./TypingIndicator";
@@ -17,8 +18,9 @@ interface ChatWindowProps {
 }
 
 export default function ChatWindow({ onMinimize, onClose }: ChatWindowProps) {
-  const { messages, isTyping, sendMessage, sendVoice } = useChat();
-  const voice = useVoice(sendVoice);
+  const { messages, isTyping, sendMessage, addVoiceTurn } = useChat();
+  const live = useLiveVoice(addVoiceTurn);
+  const inCall = live.status !== "idle";
   const bottomRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -53,76 +55,91 @@ export default function ChatWindow({ onMinimize, onClose }: ChatWindowProps) {
         onClose={onClose}
       />
 
-      <div className="chat-scroll flex-1 space-y-4 overflow-y-auto p-4">
-        <div className="flex items-start gap-2">
-          <div className="h-8 w-8 shrink-0">
-            <ZiaAvatar animated={false} sparkles={false} />
-          </div>
-          <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-brand-50 px-4 py-3">
-            <p className="text-sm font-semibold text-brand-700">
-              Welcome to Ethiraj College Site! 👋
-            </p>
-            <p className="mt-1 text-sm leading-relaxed text-gray-700">
-              I&apos;m Zia, your CampusGuide AI assistant. How can I help
-              you today?
-            </p>
-          </div>
-        </div>
-
-        {messages.length === 0 && (
-          <>
-            <QuickActions variant="grid" onSelect={handleQuickAction} />
-
-            <div className="rounded-xl bg-brand-50 p-3">
-              <p className="mb-2 text-xs font-semibold text-brand-700">
-                You can also ask me anything about:
-              </p>
-              <ul className="space-y-1 text-xs text-gray-600">
-                {[
-                  "Departments and Programs",
-                  "Scholarships and Financial Aid",
-                  "Placements and Internships",
-                  "Hostel and Accommodation",
-                  "Examinations and Results",
-                  "And much more!",
-                ].map((item) => (
-                  <li key={item} className="flex items-center gap-2">
-                    <span className="text-green-600">✓</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </>
+      <div className="relative flex min-h-0 flex-1 flex-col">
+        {inCall && (
+          <LiveVoicePanel
+            status={live.status}
+            activity={live.activity}
+            languageLabel={
+              VOICE_LANGUAGES.find((l) => l.code === live.language)?.label ?? "English"
+            }
+            userCaption={live.userCaption}
+            ziaCaption={live.ziaCaption}
+            level={live.level}
+            onEnd={live.stop}
+          />
         )}
 
-        {messages.map((message) => (
-          <MessageBubble key={message.id} message={message} />
-        ))}
+        <div className="chat-scroll flex-1 space-y-4 overflow-y-auto p-4">
+          <div className="flex items-start gap-2">
+            <div className="h-8 w-8 shrink-0">
+              <ZiaAvatar animated={false} sparkles={false} />
+            </div>
+            <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-brand-50 px-4 py-3">
+              <p className="text-sm font-semibold text-brand-700">
+                Welcome to Ethiraj College Site! 👋
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-gray-700">
+                I&apos;m Zia, your CampusGuide AI assistant. How can I help
+                you today?
+              </p>
+            </div>
+          </div>
 
-        {isTyping && <TypingIndicator />}
+          {messages.length === 0 && (
+            <>
+              <QuickActions variant="grid" onSelect={handleQuickAction} />
 
-        <div ref={bottomRef} />
-      </div>
+              <div className="rounded-xl bg-brand-50 p-3">
+                <p className="mb-2 text-xs font-semibold text-brand-700">
+                  You can also ask me anything about:
+                </p>
+                <ul className="space-y-1 text-xs text-gray-600">
+                  {[
+                    "Departments and Programs",
+                    "Scholarships and Financial Aid",
+                    "Placements and Internships",
+                    "Hostel and Accommodation",
+                    "Examinations and Results",
+                    "And much more!",
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-2">
+                      <span className="text-green-600">✓</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          )}
 
-      <ChatInput
-        onSend={sendMessage}
-        disabled={isTyping}
-        voice={
-          voice.supported
-            ? {
-                state: voice.state,
-                language: voice.language,
-                onLanguageChange: voice.setLanguage,
-                onToggle: voice.toggle,
-                error: voice.error,
-              }
-            : undefined
-        }
-      />
+          {messages.map((message) => (
+            <MessageBubble key={message.id} message={message} />
+          ))}
 
-      <div className="flex items-center justify-center gap-1 border-t border-gray-100 py-2 text-[11px] text-gray-400">
-        Powered by <span className="font-medium text-brand-600">Multi-Agent AI &amp; RAG</span>
+          {isTyping && <TypingIndicator />}
+
+          <div ref={bottomRef} />
+        </div>
+
+        <ChatInput
+          onSend={sendMessage}
+          disabled={isTyping}
+          live={
+            live.supported
+              ? {
+                  language: live.language,
+                  onLanguageChange: live.setLanguage,
+                  onStart: () => void live.start(),
+                  error: live.error,
+                }
+              : undefined
+          }
+        />
+
+        <div className="flex items-center justify-center gap-1 border-t border-gray-100 py-2 text-[11px] text-gray-400">
+          Powered by <span className="font-medium text-brand-600">Multi-Agent AI &amp; RAG</span>
+        </div>
       </div>
     </div>
   );

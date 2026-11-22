@@ -35,12 +35,8 @@ export interface ChatApiResponse {
 
 export type VoiceLanguage = "en-IN" | "hi-IN" | "ta-IN" | "te-IN" | "ml-IN";
 
-export interface VoiceApiResponse extends ChatApiResponse {
-  transcript: string;
-  language: VoiceLanguage;
-  audio: string | null;
-  audio_mime: string | null;
-}
+// Live voice call lifecycle.
+export type LiveStatus = "idle" | "connecting" | "live";
 
-// idle -> recording -> processing -> speaking -> idle
-export type VoiceState = "idle" | "recording" | "processing" | "speaking";
+// What is happening inside a live call right now.
+export type LiveActivity = "listening" | "searching" | "speaking";
