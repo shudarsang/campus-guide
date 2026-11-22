@@ -6,7 +6,6 @@ import ZiaAvatar from "./ZiaAvatar";
 interface LiveVoicePanelProps {
   status: LiveStatus;
   activity: LiveActivity;
-  languageLabel: string;
   userCaption: string;
   ziaCaption: string;
   level: number;
@@ -22,7 +21,6 @@ const STATUS_TEXT: Record<LiveActivity, string> = {
 export default function LiveVoicePanel({
   status,
   activity,
-  languageLabel,
   userCaption,
   ziaCaption,
   level,
@@ -42,7 +40,10 @@ export default function LiveVoicePanel({
       className="absolute inset-0 z-10 flex flex-col items-center bg-gradient-to-b from-brand-50 via-white to-brand-50 px-6 pb-6 pt-8"
     >
       <p className="text-xs font-medium uppercase tracking-wider text-brand-600">
-        Live voice · {languageLabel}
+        Live voice
+      </p>
+      <p className="mt-1 text-center text-[11px] text-gray-500">
+        Speak in English, हिन्दी, தமிழ், తెలుగు or മലയാളം
       </p>
 
       <div className="relative mt-8 flex h-40 w-40 items-center justify-center">

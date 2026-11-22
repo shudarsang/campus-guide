@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "@/hooks/useChat";
-import { useLiveVoice, VOICE_LANGUAGES } from "@/hooks/useLiveVoice";
+import { useLiveVoice } from "@/hooks/useLiveVoice";
 import { QuickAction } from "@/types/chat";
 import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
@@ -60,9 +60,6 @@ export default function ChatWindow({ onMinimize, onClose }: ChatWindowProps) {
           <LiveVoicePanel
             status={live.status}
             activity={live.activity}
-            languageLabel={
-              VOICE_LANGUAGES.find((l) => l.code === live.language)?.label ?? "English"
-            }
             userCaption={live.userCaption}
             ziaCaption={live.ziaCaption}
             level={live.level}
@@ -128,8 +125,6 @@ export default function ChatWindow({ onMinimize, onClose }: ChatWindowProps) {
           live={
             live.supported
               ? {
-                  language: live.language,
-                  onLanguageChange: live.setLanguage,
                   onStart: () => void live.start(),
                   error: live.error,
                 }

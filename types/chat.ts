@@ -33,8 +33,6 @@ export interface ChatApiResponse {
   error: string | null;
 }
 
-export type VoiceLanguage = "en-IN" | "hi-IN" | "ta-IN" | "te-IN" | "ml-IN";
-
 // Live voice call lifecycle.
 export type LiveStatus = "idle" | "connecting" | "live";
 

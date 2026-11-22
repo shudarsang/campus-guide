@@ -3,17 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { liveVoiceUrl } from "@/services/api";
 import { isLiveVoiceSupported, MicStreamer, PcmPlayer } from "@/services/liveAudio";
-import { LiveActivity, LiveStatus, VoiceLanguage } from "@/types/chat";
-
-const LANGUAGE_STORAGE_KEY = "zia-voice-language";
-
-export const VOICE_LANGUAGES: { code: VoiceLanguage; label: string }[] = [
-  { code: "en-IN", label: "English" },
-  { code: "hi-IN", label: "हिन्दी" },
-  { code: "ta-IN", label: "தமிழ்" },
-  { code: "te-IN", label: "తెలుగు" },
-  { code: "ml-IN", label: "മലയാളം" },
-];
+import { LiveActivity, LiveStatus } from "@/types/chat";
 
 type ServerEvent =
   | { type: "ready" }
@@ -30,7 +20,6 @@ type OnTurn = (userText: string, ziaText: string) => void;
 export function useLiveVoice(onTurn: OnTurn) {
   const [status, setStatus] = useState<LiveStatus>("idle");
   const [activity, setActivity] = useState<LiveActivity>("listening");
-  const [language, setLanguageState] = useState<VoiceLanguage>("en-IN");
   const [userCaption, setUserCaption] = useState("");
   const [ziaCaption, setZiaCaption] = useState("");
   const [level, setLevel] = useState(0);
@@ -52,21 +41,6 @@ export function useLiveVoice(onTurn: OnTurn) {
 
   useEffect(() => {
     setSupported(isLiveVoiceSupported());
-    try {
-      const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY) as VoiceLanguage | null;
-      if (saved && VOICE_LANGUAGES.some((l) => l.code === saved)) setLanguageState(saved);
-    } catch {
-      // Storage blocked - default language is fine.
-    }
-  }, []);
-
-  const setLanguage = useCallback((code: VoiceLanguage) => {
-    setLanguageState(code);
-    try {
-      localStorage.setItem(LANGUAGE_STORAGE_KEY, code);
-    } catch {
-      // Not persisted; still applies for this session.
-    }
   }, []);
 
   // Push the finished exchange into the chat and start a fresh one.
@@ -200,7 +174,7 @@ export function useLiveVoice(onTurn: OnTurn) {
     const mic = new MicStreamer();
     micRef.current = mic;
 
-    const ws = new WebSocket(liveVoiceUrl(language));
+    const ws = new WebSocket(liveVoiceUrl());
     ws.binaryType = "arraybuffer";
     wsRef.current = ws;
 
@@ -250,7 +224,7 @@ export function useLiveVoice(onTurn: OnTurn) {
           : "Couldn't connect to Zia's voice service. Please try again in a moment."
       );
     };
-  }, [fail, handleEvent, language]);
+  }, [fail, handleEvent]);
 
   // Hang up if the chat window closes mid-call.
   useEffect(() => () => teardown(), [teardown]);
@@ -259,8 +233,6 @@ export function useLiveVoice(onTurn: OnTurn) {
     supported,
     status,
     activity,
-    language,
-    setLanguage,
     userCaption,
     ziaCaption,
     level,

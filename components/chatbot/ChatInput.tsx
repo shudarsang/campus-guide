@@ -1,12 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { VoiceLanguage } from "@/types/chat";
-import { VOICE_LANGUAGES } from "@/hooks/useLiveVoice";
 
 interface LiveControls {
-  language: VoiceLanguage;
-  onLanguageChange: (language: VoiceLanguage) => void;
   onStart: () => void;
   error: string | null;
 }
@@ -36,22 +32,6 @@ export default function ChatInput({ onSend, disabled, live }: ChatInputProps) {
       )}
 
       <form onSubmit={handleSubmit} className="flex items-center gap-2 px-4 py-3">
-        {live && (
-          <select
-            value={live.language}
-            onChange={(e) => live.onLanguageChange(e.target.value as VoiceLanguage)}
-            aria-label="Voice language"
-            title="Language Zia speaks in voice calls"
-            className="h-9 w-20 shrink-0 cursor-pointer rounded-full border border-gray-200 bg-gray-50 px-2 text-xs text-gray-700 outline-none focus:border-brand-400"
-          >
-            {VOICE_LANGUAGES.map((l) => (
-              <option key={l.code} value={l.code}>
-                {l.label}
-              </option>
-            ))}
-          </select>
-        )}
-
         <input
           type="text"
           value={value}
@@ -66,7 +46,7 @@ export default function ChatInput({ onSend, disabled, live }: ChatInputProps) {
             type="button"
             onClick={live.onStart}
             aria-label="Talk to Zia live"
-            title="Talk to Zia live"
+            title="Talk to Zia live — in English, Hindi, Tamil, Telugu or Malayalam"
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600 transition hover:bg-brand-100"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">

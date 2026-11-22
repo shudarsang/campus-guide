@@ -1,4 +1,4 @@
-import { ChatApiResponse, ChatTurn, VoiceLanguage } from "@/types/chat";
+import { ChatApiResponse, ChatTurn } from "@/types/chat";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://campusg-backend.onrender.com";
@@ -41,7 +41,7 @@ export async function sendChatMessage(
 }
 
 // WebSocket address of the live voice endpoint (http -> ws, https -> wss).
-export function liveVoiceUrl(language: VoiceLanguage): string {
+export function liveVoiceUrl(): string {
   const base = API_BASE_URL.replace(/^http/, "ws").replace(/\/$/, "");
-  return `${base}/api/live?lang=${encodeURIComponent(language)}`;
+  return `${base}/api/live`;
 }
