@@ -32,3 +32,15 @@ export interface ChatApiResponse {
   sources: ChatSource[];
   error: string | null;
 }
+
+export type VoiceLanguage = "en-IN" | "hi-IN" | "ta-IN" | "te-IN" | "ml-IN";
+
+export interface VoiceApiResponse extends ChatApiResponse {
+  transcript: string;
+  language: VoiceLanguage;
+  audio: string | null;
+  audio_mime: string | null;
+}
+
+// idle -> recording -> processing -> speaking -> idle
+export type VoiceState = "idle" | "recording" | "processing" | "speaking";

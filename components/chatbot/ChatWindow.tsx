@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "@/hooks/useChat";
+import { useVoice } from "@/hooks/useVoice";
 import { QuickAction } from "@/types/chat";
 import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
@@ -16,7 +17,8 @@ interface ChatWindowProps {
 }
 
 export default function ChatWindow({ onMinimize, onClose }: ChatWindowProps) {
-  const { messages, isTyping, sendMessage } = useChat();
+  const { messages, isTyping, sendMessage, sendVoice } = useChat();
+  const voice = useVoice(sendVoice);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -103,7 +105,21 @@ export default function ChatWindow({ onMinimize, onClose }: ChatWindowProps) {
         <div ref={bottomRef} />
       </div>
 
-      <ChatInput onSend={sendMessage} disabled={isTyping} />
+      <ChatInput
+        onSend={sendMessage}
+        disabled={isTyping}
+        voice={
+          voice.supported
+            ? {
+                state: voice.state,
+                language: voice.language,
+                onLanguageChange: voice.setLanguage,
+                onToggle: voice.toggle,
+                error: voice.error,
+              }
+            : undefined
+        }
+      />
 
       <div className="flex items-center justify-center gap-1 border-t border-gray-100 py-2 text-[11px] text-gray-400">
         Powered by <span className="font-medium text-brand-600">Multi-Agent AI &amp; RAG</span>
