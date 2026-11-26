@@ -10,6 +10,16 @@ body {
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
+  /* Stop iOS enlarging text when the phone is rotated. */
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Nothing on the page may push it wider than the screen - on a phone
+   that lets it scroll sideways and pushes the Zia button off the edge.
+   `clip` (unlike `hidden`) keeps the sticky header working. */
+html,
+body {
+  overflow-x: clip;
 }
 
 body {
@@ -130,18 +140,18 @@ body {
 @keyframes zia-intro-pop {
   0% {
     opacity: 0;
-    transform: translate(calc(60px - 50vw), calc(60px - 50vh)) scale(0);
+    transform: translate(calc(var(--zia-c, 60px) - 50vw), calc(var(--zia-c, 60px) - 50vh)) scale(0);
   }
   60% {
     opacity: 1;
-    transform: translate(calc(60px - 50vw), calc(60px - 50vh)) scale(2.6);
+    transform: translate(calc(var(--zia-c, 60px) - 50vw), calc(var(--zia-c, 60px) - 50vh)) scale(2.6);
   }
   80% {
-    transform: translate(calc(60px - 50vw), calc(60px - 50vh)) scale(2.05);
+    transform: translate(calc(var(--zia-c, 60px) - 50vw), calc(var(--zia-c, 60px) - 50vh)) scale(2.05);
   }
   100% {
     opacity: 1;
-    transform: translate(calc(60px - 50vw), calc(60px - 50vh)) scale(2.2);
+    transform: translate(calc(var(--zia-c, 60px) - 50vw), calc(var(--zia-c, 60px) - 50vh)) scale(2.2);
   }
 }
 

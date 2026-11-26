@@ -162,10 +162,10 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="mx-auto mt-10 grid max-w-3xl grid-cols-3 gap-6 px-6 text-center">
+        <div className="mx-auto mt-10 grid max-w-3xl grid-cols-3 gap-3 px-4 text-center sm:gap-6 sm:px-6">
           {STATS.map((s) => (
-            <div key={s.label}>
-              <p className="text-3xl font-bold text-brand-700 md:text-4xl">
+            <div key={s.label} className="min-w-0">
+              <p className="text-2xl font-bold text-brand-700 sm:text-3xl md:text-4xl">
                 {s.count}
               </p>
               <p className="mt-1 text-xs text-gray-500 md:text-sm">

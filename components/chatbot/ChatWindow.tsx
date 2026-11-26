@@ -38,14 +38,28 @@ export default function ChatWindow({ onMinimize, onClose }: ChatWindowProps) {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
+  // On a phone the chat covers the whole screen, so stop the page
+  // behind it from scrolling while it is open.
+  useEffect(() => {
+    if (!window.matchMedia("(max-width: 639px)").matches) return;
+    const { body } = document;
+    const previous = body.style.overflow;
+    body.style.overflow = "hidden";
+    return () => {
+      body.style.overflow = previous;
+    };
+  }, []);
+
   const handleQuickAction = (action: QuickAction) => {
     sendMessage(action.prompt);
   };
 
   return (
     <div
-      className={`fixed bottom-24 right-6 z-50 flex max-h-[calc(100vh-7.5rem)] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl bg-white shadow-widget transition-[width,height] duration-300 ease-out ${
-        isExpanded ? "h-[calc(100vh-7.5rem)] w-[760px]" : "h-[600px] w-[380px]"
+      // Phone: full screen, like a messaging app (dvh follows the
+      // browser bars and keyboard). From 640px up: the floating window.
+      className={`fixed inset-x-0 top-0 z-[60] flex h-[100dvh] w-full flex-col overflow-hidden bg-white sm:inset-auto sm:bottom-24 sm:right-6 sm:z-50 sm:max-h-[calc(100vh-7.5rem)] sm:max-w-[calc(100vw-2rem)] sm:rounded-2xl sm:shadow-widget sm:transition-[width,height] sm:duration-300 sm:ease-out ${
+        isExpanded ? "sm:h-[calc(100vh-7.5rem)] sm:w-[760px]" : "sm:h-[600px] sm:w-[380px]"
       }`}
     >
       <ChatHeader

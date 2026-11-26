@@ -19,11 +19,11 @@ const FLY_MS = 950;
 const NUDGE_DELAY_MS = 1500;
 const NUDGE_DISMISSED_KEY = "zia-nudge-dismissed";
 
-// The button sits 24px from the corner and is 72px wide, so its centre is
-// 60px from the right and bottom edges. This transform moves it to the
-// middle of the viewport and enlarges it.
+// --zia-c is the distance from the screen edge to the button's centre:
+// 16px + 64px/2 = 48px on phones, 24px + 72px/2 = 60px from 640px up.
+// This transform moves it to the middle of the viewport and enlarges it.
 const CENTRE_TRANSFORM =
-  "translate(calc(60px - 50vw), calc(60px - 50vh)) scale(2.2)";
+  "translate(calc(var(--zia-c) - 50vw), calc(var(--zia-c) - 50vh)) scale(2.2)";
 
 function rememberNudgeDismissal() {
   try {
@@ -142,7 +142,13 @@ export default function ChatBubble({ isOpen, onClick }: ChatBubbleProps) {
         </div>
       )}
 
-      <div className="fixed bottom-6 right-6 z-50 flex items-end gap-3">
+      <div
+        // On phones the open chat is full screen with its own close
+        // button, so the launcher steps aside.
+        className={`fixed bottom-4 right-4 z-50 items-end gap-3 [--zia-c:48px] sm:bottom-6 sm:right-6 sm:flex sm:[--zia-c:60px] ${
+          isOpen ? "hidden" : "flex"
+        }`}
+      >
         {showNudge && !isOpen && (
           <div className="zia-greeting relative mb-4 hidden max-w-[220px] rounded-2xl rounded-br-sm border border-brand-100 bg-white px-4 py-3 text-sm shadow-widget sm:block">
             <button
@@ -165,7 +171,7 @@ export default function ChatBubble({ isOpen, onClick }: ChatBubbleProps) {
           <button
             onClick={handleClick}
             aria-label={isOpen ? "Close chat" : "Chat with Zia"}
-            className="group relative block h-[72px] w-[72px] rounded-full focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-300"
+            className="group relative block h-16 w-16 rounded-full sm:h-[72px] sm:w-[72px] focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-300"
           >
             {/* Breathing purple glow */}
             {!isOpen && (
